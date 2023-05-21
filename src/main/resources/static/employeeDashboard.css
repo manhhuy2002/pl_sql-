@@ -173,16 +173,17 @@ body{
     max-height: 500px;
 }
 
-.wrapper .main-container{
-    width: (100% - 250px);
+.wrapper .main-container {
+    width: calc(100% - 250px);
     margin-top: 70px;
     margin-left: 250px;
     padding: 15px;
-    background: url(background.jpg)no-repeat;
+    background: url(https://as2.ftcdn.net/v2/jpg/00/69/42/49/1000_F_69424905_vxTpRGAcVKni9157VpKAOG6MpTX30etl.jpg) no-repeat;
     background-size: cover;
-    height: 100vh;
     transition: 0.3s;
+    height: 100vh;
 }
+
 
 .wrapper.collapse .sidebar{
     width: 70px;
@@ -214,4 +215,3 @@ body{
     margin-bottom: 10px;
     font-size: 14px;
 }
-      
