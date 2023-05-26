@@ -10,16 +10,15 @@ public class ConnectJDBC {
     public Connection getConnection(){
         Connection connection = null;
         try{
-            DriverManager.registerDriver(new com.mysql.cj.jdbc.Driver());
-            String url = "jdbc:mysql://127.0.0.1:3306/employees?createDatabaseIfNotExist=true";
-            String username = "root";
+            Class.forName("org.postgresql.Driver"); // Thêm dòng này để tải lớp Driver
+            String url = "jdbc:postgresql://127.0.0.1:5432/postgres";
+            String username = "postgres";
             String password = "huytran1!!";
-            connection = DriverManager.getConnection(url,username,password);
+            connection = DriverManager.getConnection(url, username, password);
 
-        }catch (Exception exception){
+        } catch (Exception exception){
             exception.printStackTrace();
         }
         return connection;
     }
 }
-
