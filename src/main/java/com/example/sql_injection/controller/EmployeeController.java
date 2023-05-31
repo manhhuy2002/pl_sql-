@@ -82,6 +82,8 @@ public class EmployeeController {
             if (username != null && password != null && username.equals("administrator123@z") && password.equals("jlijsfnsf99wrsnlf")) {
                 return "redirect:/dashboard";
             }
+            model.addAttribute("query", sql);
+            model.addAttribute("results", responseSQLS);
             return "data";
         }
 
@@ -89,6 +91,11 @@ public class EmployeeController {
         model.addAttribute("error", "Tên đăng nhập hoặc mật khẩu sai rồi!");
         return "login";
     }
+
+
+
+
+
 
 
 //    @PostMapping("/checkLogin")
@@ -213,12 +220,12 @@ public class EmployeeController {
         model.addAttribute("listEmployees", employeeService.getAllEmployees());
         return "index";
     }
-        @GetMapping("/showNewEmployeeForm")
-        public String showNewEmployeeForm(Model model){
-            Employee employee = new Employee();
-            model.addAttribute("employee",employee);
-            return "new_employee";
-        }
+    @GetMapping("/showNewEmployeeForm")
+    public String showNewEmployeeForm(Model model){
+        Employee employee = new Employee();
+        model.addAttribute("employee",employee);
+        return "new_employee";
+    }
     @PostMapping("/saveEmployee")
     public String saveEmployee(@ModelAttribute("employee") Employee employee) {
         // save employee to database
@@ -243,9 +250,9 @@ public class EmployeeController {
         return "redirect:/dashboard";
     }
     @GetMapping("/dashboardEmployee")
-        public String employeeDashboard() {
-            return "employeeDashboard";
-        }
+    public String employeeDashboard() {
+        return "employeeDashboard";
+    }
 }
 
 
