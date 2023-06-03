@@ -47,7 +47,7 @@ public class EmployeeController {
         return "redirect:/login";
     }
 
-    @PostMapping("/checkLogin")
+    @PostMapping("/login")
     public String checkLogin(@ModelAttribute("model") LoginDTO logindto, BindingResult result, Model model) throws SQLException {
         final String regex = "jqk";
         String sql = MessageFormat.format("SELECT username,password FROM employees WHERE username =''{0}'' and password=''{1}'' ",logindto.getUsername(),logindto.getPassword());
@@ -56,12 +56,12 @@ public class EmployeeController {
         final Matcher matcher = pattern.matcher(sql);
         if(matcher.find()){
             model.addAttribute("logindto",new LoginDTO());
-            model.addAttribute("error","Bạn định hack tôi à?");
+            model.addAttribute("error","Do you want to hack me?");
             return "login";
         }
         if (result.hasErrors()) {
             model.addAttribute("logindto", new LoginDTO());
-            model.addAttribute("error", "Tên đăng nhập hoặc mật khẩu sai rồi!");
+            model.addAttribute("error", "Wrong username or password!");
             return "login";
         }
         Connection connection = connectJDBC.getConnection();
@@ -76,105 +76,49 @@ public class EmployeeController {
             responseSQLS.add(responseSQL);
 
         }
-        if (responseSQLS.size() != 0){
+        if (responseSQLS.size() != 0) {
             String username = responseSQLS.get(0).getUsername();
             String password = responseSQLS.get(0).getPassword();
             if (username != null && password != null && username.equals("administrator123@z") && password.equals("jlijsfnsf99wrsnlf")) {
                 return "redirect:/dashboard";
+            } else if (checkCredentialsInDatabase(username, password)) {
+                return "redirect:/dashboardEmployee";
+            } else {
+                model.addAttribute("results",responseSQLS);
+                model.addAttribute("query", logindto.getUsername());
+                return "data";
             }
-            model.addAttribute("query", sql);
-            model.addAttribute("results", responseSQLS);
-            return "data";
         }
 
         model.addAttribute("logindto", new LoginDTO());
-        model.addAttribute("error", "Tên đăng nhập hoặc mật khẩu sai rồi!");
+        model.addAttribute("error", "Wrong username or password!");
         return "login";
+    }
+
+    private boolean checkCredentialsInDatabase(String username, String password) {
+        try {
+            Connection connection = connectJDBC.getConnection();
+            String query1 = "SELECT COUNT(*) FROM employees WHERE username = ? AND password = ?";
+            PreparedStatement statement = connection.prepareStatement(query1);
+            statement.setString(1, username);
+            statement.setString(2, password);
+            ResultSet resultSet = statement.executeQuery();
+
+            // Kiểm tra số lượng bản ghi trả về
+            resultSet.next();
+            int count = resultSet.getInt(1);
+
+            // Trả về true nếu tồn tại bản ghi, ngược lại trả về false
+            return count > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
 
 
-
-
-
-
-//    @PostMapping("/checkLogin")
-//    public String checkLogin(@ModelAttribute("model") LoginDTO logindto, BindingResult result, Model model) throws SQLException {
-//        final String regex = "order by";
-//        String sql = MessageFormat.format("SELECT username,password FROM employees WHERE username =''{0}'' and password=''{1}'' ", logindto.getUsername(), logindto.getPassword());
-//        final Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
-//        final Matcher matcher = pattern.matcher(sql);
-//
-//        if (matcher.find()) {
-//            model.addAttribute("logindto", new LoginDTO());
-//            model.addAttribute("error", "Bạn định hack tôi à?");
-//            return "login";
-//        }
-//
-//        if (result.hasErrors()) {
-//            model.addAttribute("logindto", new LoginDTO());
-//            model.addAttribute("error", "Tên đăng nhập hoặc mật khẩu sai rồi!");
-//            return "login";
-//        }
-//
-//        Connection connection = connectJDBC.getConnection();
-//        PreparedStatement statement = null;
-//        statement = connection.prepareStatement(sql);
-//        ResultSet resultSet = statement.executeQuery();
-//
-//        List<String> resultList = new ArrayList<>();
-//        while (resultSet.next()) {
-//            String username = resultSet.getString("username");
-//            String password = resultSet.getString("password");
-//            String result = "Username: " + username + ", Password: " + password;
-//            resultList.add(result);
-//        }
-//
-//        resultSet.close();
-//        statement.close();
-//        connection.close();
-//
-//        model.addAttribute("resultList", resultList);
-//
-//        return "queryResultPage";
-//    }
-
-
-//    @PostMapping("/checkLogin")
-////    public String checkLogin(@ModelAttribute("model") LoginDTO logindto, BindingResult result, Model model) throws SQLException {
-////        final String regex = "order by";
-////        String username = logindto.getUsername();
-////        String password = logindto.getPassword();
-////        String sql = MessageFormat.format("SELECT * FROM employees WHERE username =''{0}'' and password=''{1}'' UNION SELECT NULL,NULL", username, password);
-////        final Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
-////        final Matcher matcher = pattern.matcher(sql);
-////        if (matcher.find()) {
-////            model.addAttribute("logindto", new LoginDTO());
-////            model.addAttribute("error", "Bạn định hack tôi à?");
-////            return "login";
-////        }
-////        if (result.hasErrors()) {
-////            model.addAttribute("logindto", new LoginDTO());
-////            model.addAttribute("error", "Tên đăng nhập hoặc mật khẩu sai rồi!");
-////            return "login";
-////        }
-////        Connection connection = connectJDBC.getConnection();
-////        PreparedStatement statement = connection.prepareStatement(sql);
-////        ResultSet resultSet = statement.executeQuery();
-////        if (resultSet.next()) {
-////            model.addAttribute("logindto", new LoginDTO());
-////            model.addAttribute("username", resultSet.getString(1));
-////            model.addAttribute("password", resultSet.getString(2));
-////            return "login";
-////        }
-////        model.addAttribute("logindto", new LoginDTO());
-////        model.addAttribute("error", "Tên đăng nhập hoặc mật khẩu sai rồi!");
-////        return "login";
-////    }
-
-
-
-// Đoạn code xử lí chống sql injection bằng việc bind param
+// bind param
 //    @PostMapping("/checkLogin")
 //    public String checkLogin(@ModelAttribute("model") LoginDTO logindto, BindingResult result, Model model) throws SQLException {
 //

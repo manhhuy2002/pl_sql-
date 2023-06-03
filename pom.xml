@@ -31,13 +31,6 @@
             <artifactId>postgresql</artifactId>
             <version>42.5.1</version>
         </dependency>
-        <dependency>
-            <groupId>com.microsoft.sqlserver</groupId>
-            <artifactId>mssql-jdbc</artifactId>
-            <version>9.4.0.jre11</version>
-        </dependency>
-
-        <!-- Các dependency khác trong dự án của bạn -->
 
         <dependency>
             <groupId>org.springframework.boot</groupId>

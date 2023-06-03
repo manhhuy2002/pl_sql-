@@ -16,7 +16,7 @@ public class HandleException {
     @ExceptionHandler(SQLException.class)
     public String sqlException(SQLException sqlException, Model model){
         if (sqlException.getMessage().contains("SQL syntax")) {
-            model.addAttribute("error", "Tên đăng nhập hoặc mật khẩu sai rồi!");
+            model.addAttribute("error", "Wrong username or password!");
         } else {
             model.addAttribute("error", sqlException.getMessage());
         }
