@@ -15,7 +15,7 @@ import java.util.Date;
 @NoArgsConstructor
 public class Employee {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private long id;
 
     @Column(name = "fullname")
