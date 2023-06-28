@@ -15,7 +15,6 @@ public class ConnectJDBC {
             String username = "sys as sysdba"; // Sửa thành "sys as sysdba" để đăng nhập với quyền cao nhất
             String password = "123456"; // Thay đổi thông tin kết nối
             connection = DriverManager.getConnection(url, username, password);
-
         } catch (Exception exception){
             exception.printStackTrace();
         }

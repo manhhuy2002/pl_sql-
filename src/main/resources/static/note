@@ -1,0 +1,57 @@
+@PostMapping("/login")
+    public String checkLogin(@ModelAttribute("model") LoginDTO logindto, BindingResult result, Model model) throws SQLException {
+        final String regex = "jqk";
+        final String procedureCall = "{ call check_login(?, ?, ?) }";
+
+
+        if (Pattern.compile(regex, Pattern.CASE_INSENSITIVE).matcher(logindto.getUsername()).find()) {
+            model.addAttribute("logindto", new LoginDTO());
+            model.addAttribute("error", "Do you want to hack me?");
+            return "login";
+        }
+
+        if (result.hasErrors()) {
+            model.addAttribute("logindto", new LoginDTO());
+            model.addAttribute("error", "Wrong username or password!");
+            return "login";
+        }
+
+        try (Connection connection = connectJDBC.getConnection();
+             CallableStatement statement = connection.prepareCall(procedureCall)) {
+            statement.setString(1, logindto.getUsername());
+            statement.setString(2, logindto.getPassword());
+            statement.registerOutParameter(3, OracleTypes.CURSOR);
+
+            statement.execute();
+
+            try (ResultSet resultSet = ((OracleCallableStatement) statement).getCursor(3)) {
+                List<ResponseSQL> responseSQLS = new ArrayList<>();
+
+                while (resultSet.next()) {
+                    String username = resultSet.getString("username");
+                    String password = resultSet.getString("password");
+                    ResponseSQL responseSQL = new ResponseSQL(username, password);
+                    responseSQLS.add(responseSQL);
+                }
+
+                if (responseSQLS.size() != 0) {
+                    String username = responseSQLS.get(0).getUsername();
+                    String password = responseSQLS.get(0).getPassword();
+
+                    if (username != null && password != null && username.equals("administrator123@z") && password.equals("jlijsfnsf99wrsnlf")) {
+                        return "redirect:/dashboard";
+                    } else if (checkCredentialsInDatabase(username, password)) {
+                        return "redirect:/dashboardEmployee";
+                    } else {
+                        model.addAttribute("results", responseSQLS);
+                        model.addAttribute("query", logindto.getUsername());
+                        return "data";
+                    }
+                }
+            }
+        }
+
+        model.addAttribute("logindto", new LoginDTO());
+        model.addAttribute("error", "Wrong username or password!");
+        return "login";
+    }
